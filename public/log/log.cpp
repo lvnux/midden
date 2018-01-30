@@ -40,7 +40,7 @@ bool CLog::open()
 
         char format_time[60] = { 0 };
         snprintf(format_time, 60, "%s_%04d%02d%02d", name_.c_str(), 
-            (1990 + current_day_.tm_year), (1 + current_day_.tm_mon), 
+            (1900 + current_day_.tm_year), (1 + current_day_.tm_mon), 
             current_day_.tm_mday);
 
         std::string full_path;
@@ -99,7 +99,7 @@ void CLog::write_log(Level level, const char* file, const int line, const char* 
     if (NULL != handler_)
     {
         fprintf(handler_, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] [%s] %s\n", 
-            (1990 + current_day_.tm_year), (1 + current_day_.tm_mon), 
+            (1900 + current_day_.tm_year), (1 + current_day_.tm_mon), 
             current_day_.tm_mday, current_day_.tm_hour,
             current_day_.tm_min, current_day_.tm_sec,
             LEVEL_NAME[level_].c_str(), 
