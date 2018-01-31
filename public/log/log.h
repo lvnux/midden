@@ -51,7 +51,7 @@ public:
     bool init(const std::string& path, const std::string& name, int level);
     bool open();
     void write_log(Level level, const char* file, const int line, const char* func, const char* format, ...);
-    Level get_level();
+    int get_level();
     void set_level(Level level);
 
 private:

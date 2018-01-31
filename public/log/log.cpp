@@ -119,9 +119,13 @@ void CLog::new_day_log_file()
     open();
 }
 
-Level CLog::get_level()
+int CLog::get_level()
 {
-    return level_;
+    int level;
+    pthread_mutex_lock(&mutex_);
+    level = level_;  // enum Level 转换成 int
+    pthread_mutex_unlock(&mutex_);
+    return level;
 }
 
 void CLog::set_level(Level level)
