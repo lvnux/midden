@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <string.h>
 
+
 NetServerSocket::NetServerSocket(NetServiceManager* manager)
 {
     socket_ = socket(AF_INET, SOCK_STREAM, 0);
@@ -51,7 +52,7 @@ bool NetServerSocket::listen(const NetAddress& address, int backlog)
         return false;
     }
 
-    manager_->get_selector()->add(this, EpollSelector::SELECT_READ);
+    manager_->get_selector()->add(this, ISelector::SELECT_READ);
     return true;
 }
 
