@@ -1,3 +1,8 @@
+/*
+ * net_server_socket.h
+ * 服务端socket
+ */
+
 #ifndef __NET_SERVER_SOCKET_H__
 #define __NET_SERVER_SOCKET_H__
 

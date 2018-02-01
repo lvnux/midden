@@ -85,7 +85,7 @@ std::string NetAddress::get_format_ipaddress() const
     return inet_ntoa(addr);
 }
 
-void NetAddress::set_ipaddress_form_format_ipaddress(const std::string& ipaddress)
+void NetAddress::set_ipaddress(const std::string& ipaddress)
 {
     hostent* host = gethostbyname(ipaddress.c_str());
     if (NULL == host)

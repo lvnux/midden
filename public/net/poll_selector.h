@@ -1,3 +1,8 @@
+/*
+ * poll_selector.h
+ * poll多路复用
+ */
+
 #ifndef __POLL_SELECTOR_H__
 #define __POLL_SELECTOR_H__
 

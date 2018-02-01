@@ -1,3 +1,8 @@
+/*
+ * epoll_selector.h
+ * epoll多路复用
+ */
+
 #ifndef __EPOLL_SELECTOR_H__
 #define __EPOLL_SELECTOR_H__
 

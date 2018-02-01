@@ -1,3 +1,8 @@
+/*
+ * platfrom.h
+ * 常用类型定义，兼容不同平台
+ */
+
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
@@ -34,6 +39,5 @@ typedef int64_t int64;
 #ifndef uint64
 typedef uint64_t uint64;
 #endif
-
 
 #endif  // __PLATFORM_H__

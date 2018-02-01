@@ -1,3 +1,8 @@
+/*
+ * net_service_manager.h
+ * 网络服务管理类
+ */
+
 #ifndef __NET_SERVICE_MANAGER_H__
 #define __NET_SERVICE_MANAGER_H__
 
