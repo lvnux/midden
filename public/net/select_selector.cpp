@@ -39,7 +39,6 @@ int SelectSelector::select()
     memcpy(&writefds, &writefds_, sizeof(writefds_));
     memcpy(&exceptfds, &exceptfds_, sizeof(exceptfds_));
 
-
     int count = ::select(maxfd_+1, &readfds, &writefds, &exceptfds, 0);
     for (std::map<int, IHandler*>::iterator itor = fd_handler_.begin(); itor != fd_handler_.end(); ++itor)
     {

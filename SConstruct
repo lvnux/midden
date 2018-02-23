@@ -17,6 +17,7 @@ u_cpppath.append(u_public_dir)
 u_cpppath.append(u_public_dir + "/base")
 u_cpppath.append(u_public_dir + "/log")
 u_cpppath.append(u_public_dir + "/net")
+u_cpppath.append(u_public_dir + "/thread")
 
 u_cpppath.append(u_source_dir)
 
@@ -26,6 +27,7 @@ u_libs = ['pthread', 'rt']
 
 u_cppfiles = Glob(u_public_dir + '/log/*.cpp') + \
     Glob(u_public_dir + '/net/*.cpp') + \
+    Glob(u_public_dir + '/thread/*.cpp') + \
     Glob(u_source_dir + '/*.cpp')
 
 

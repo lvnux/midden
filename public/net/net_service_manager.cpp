@@ -28,7 +28,7 @@ ISelector* NetServiceManager::get_selector() const
     return selector_;
 }
 
-NetServerSocket* NetServiceManager::create_server_socket()
+NetServerSocket* NetServiceManager::create_server_socket(BaseThread* thread)
 {
-    return new NetServerSocket(this);
+    return new NetServerSocket(this, thread);
 }

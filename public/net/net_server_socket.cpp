@@ -5,10 +5,11 @@
 #include <string.h>
 
 
-NetServerSocket::NetServerSocket(NetServiceManager* manager)
+NetServerSocket::NetServerSocket(NetServiceManager* manager, BaseThread* thread)
 {
     socket_ = socket(AF_INET, SOCK_STREAM, 0);
     manager_ = manager;
+    thread_ = thread;
 }
 
 NetServerSocket::~NetServerSocket()
@@ -70,6 +71,11 @@ int NetServerSocket::get_descriptor()
 void NetServerSocket::on_read()
 {
     printf("on_read\n");
+    BaseMsg* msg = new BaseMsg();
+    msg->msg_type = 123;
+    msg->msg_id = "123hello world";
+    msg->sender = thread_;
+    thread_->put_data(msg);
 }
 
 void NetServerSocket::on_write()

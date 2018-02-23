@@ -7,6 +7,7 @@
 #define __NET_SERVICE_MANAGER_H__
 
 #include "iselector.h"
+#include "BaseThread.h"
 
 class NetServerSocket;
 class NetServiceManager
@@ -18,7 +19,7 @@ public:
 public:
     bool init();
     ISelector* get_selector() const;
-    NetServerSocket* create_server_socket();
+    NetServerSocket* create_server_socket(BaseThread* thread);
 
 private:
     ISelector* selector_;

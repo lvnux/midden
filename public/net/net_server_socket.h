@@ -8,6 +8,7 @@
 
 #include "ihandler.h"
 #include "net_address.h"
+#include "BaseThread.h"
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -17,7 +18,7 @@ class NetServiceManager;
 class NetServerSocket : public IHandler
 {
 public:
-    NetServerSocket(NetServiceManager* manager);
+    NetServerSocket(NetServiceManager* manager, BaseThread* thread);
     ~NetServerSocket();
 
 public:
@@ -32,6 +33,7 @@ protected:
 private:
     int socket_;
     NetServiceManager* manager_;
+    BaseThread* thread_;
 };
 
 #endif  // __NET_SERVER_SOCKET_H__
