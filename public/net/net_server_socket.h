@@ -8,11 +8,18 @@
 
 #include "ihandler.h"
 #include "net_address.h"
-#include "BaseThread.h"
+#include "base_thread.h"
 
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
+class TAcceptSocketMsg : public BaseMsg
+{
+public:
+    int socket;
+    NetAddress address;
+};
 
 class NetServiceManager;
 class NetServerSocket : public IHandler

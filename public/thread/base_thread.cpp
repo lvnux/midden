@@ -1,4 +1,4 @@
-#include "BaseThread.h"
+#include "base_thread.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -129,7 +129,6 @@ bool BaseThread::is_alive()
 
 void BaseThread::put_data(BaseMsg* msg)
 {
-    printf("put_data\n");
     pthread_mutex_lock(&mutex_);
     que_.put_data(msg);
     pthread_mutex_unlock(&mutex_);

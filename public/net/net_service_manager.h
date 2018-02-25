@@ -7,7 +7,7 @@
 #define __NET_SERVICE_MANAGER_H__
 
 #include "iselector.h"
-#include "BaseThread.h"
+#include "base_thread.h"
 
 class NetServerSocket;
 class NetServiceManager

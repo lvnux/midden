@@ -1,5 +1,5 @@
 /*
- * BaseThread.h
+ * base_thread.h
  * 线程基类
  */
 
@@ -11,8 +11,9 @@
 #include <queue>
 
 
-// 消息体，用于线程间传递
 class BaseThread;
+
+// 消息体，用于线程间传递
 class BaseMsg
 {
 public:
@@ -50,6 +51,7 @@ public:
 };
 
 
+// 线程基类
 class BaseThread
 {
 public:
