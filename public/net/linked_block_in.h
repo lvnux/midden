@@ -2,14 +2,26 @@
 #define __LINKED_BLOCK_IN_H__
 
 #include "iblock_in.h"
+#include "linked_block.h"
 
-class LinkedBlockIn : IBlockIn
+
+class LinkedBufferIn;
+class LinkedBlockIn : public IBlockIn
 {
 public:
-    virtual char* data() = 0;
-    virtual int size() = 0;
-    virtual void fill(int bytes) = 0;
-    virtual void release() = 0;
+    LinkedBlockIn(LinkedBlock* block, LinkedBufferIn* buffer, bool filled=false);
+    virtual ~LinkedBlockIn();
+
+protected:
+    virtual char* data();
+    virtual int size();
+    virtual void fill(int bytes);
+    virtual void release();
+
+private:
+    LinkedBlock* block_;
+    LinkedBufferIn* buffer_;
+    bool filled_;
 };
 
 #endif  // __LINKED_BLOCK_IN_H__

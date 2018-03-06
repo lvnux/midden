@@ -3,8 +3,9 @@
 
 #include "output_buffer.h"
 #include "iblock_out.h"
+#include "iflush_handler.h"
 
-class IFlushHandler;
+
 class IBufferOut : public OutBuffer
 {
 public:

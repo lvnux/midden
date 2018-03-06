@@ -1,4 +1,6 @@
 #include "linked_block_pool.h"
+#include "linked_block.h"
+
 
 LinkedBlockPool::LinkedBlockPool()
     : max_count_(1024)
@@ -8,7 +10,7 @@ LinkedBlockPool::LinkedBlockPool()
 
 LinkedBlockPool::~LinkedBlockPool()
 {
-    while (!blocks_.emtpy())
+    while (!blocks_.empty())
     {
         LinkedBlock* block = blocks_.top();
         blocks_.pop();
@@ -30,7 +32,7 @@ LinkedBlock* LinkedBlockPool::get_block()
     }
     else
     {
-        block = new LinkedBlock();
+        block = new LinkedBlock(this);
     }
 
     return block;
@@ -44,7 +46,7 @@ bool LinkedBlockPool::put_block(LinkedBlock* block)
         {
             return false;
         }
-        block->reuse()
+        block->reuse();
         blocks_.push(block);
     }
     else

@@ -7,20 +7,23 @@
 #define __NET_SOCKET_H__
 
 #include "ihandler.h"
+#include "iflush_handler.h"
 #include "net_service_manager.h"
 #include "net_address.h"
 #include "inet_socket_handler.h"
 #include "event_type.h"
+#include "linked_block_pool.h"
 
-class NetSocket : public IHandler
+
+class NetSocket : public IHandler, public IFlushHandler
 {
 public:
     NetSocket();
     ~NetSocket();
 
 public:
-    bool init(NetServiceManager* manager);
-    bool init(NetServiceManager* manager, int socket, const NetAddress& address);
+    bool init(NetServiceManager* manager, LinkedBlockPool* pool);
+    bool init(NetServiceManager* manager, int socket, const NetAddress& address, LinkedBlockPool* pool);
     void connect(const NetAddress& address);
     void close();
     void set_peek(bool flag);
@@ -31,10 +34,16 @@ public:
 
     void set_socket_handler(INetSocketHandler* handler);
 
+    IBufferIn* get_buffer_in() const;
+    IBufferOut* get_buffer_out() const;
+
 public:
     virtual int get_descriptor();
     virtual void on_read();
     virtual void on_write();
+
+public:
+    virtual void on_flush(IBufferOut* buffer);
 
 public:
     void on_connected();
@@ -53,6 +62,10 @@ private:
     uint8 state_;
     bool flag_;
     int socket_;
+
+    IBufferIn* buffer_in_;
+    IBufferOut* buffer_out_;
+
     INetSocketHandler* handler_;
     NetServiceManager* manager_;
 };

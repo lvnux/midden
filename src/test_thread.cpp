@@ -20,6 +20,8 @@ bool TestThread::init()
         return false;
     }
 
+    block_pool_ = new LinkedBlockPool();
+
     return true;
 }
 
@@ -84,7 +86,7 @@ void TestThread::dispose_accept_socket(BaseMsg* msg)
     printf("msg type: [%d]\n", pMsg->msg_type);
 
     TestSocketHandler* handler = new TestSocketHandler(this);
-    if (false == handler->init(manager_, pMsg->socket, pMsg->address))
+    if (false == handler->init(manager_, pMsg->socket, pMsg->address, block_pool_))
     {
         printf("TestThread::dispose_accept_socket failed\n");
         delete handler;

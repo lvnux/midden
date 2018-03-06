@@ -1,6 +1,8 @@
 #ifndef __LINKED_BLOCK_POOL_H__
 #define __LINKED_BLOCK_POOL_H__
 
+#include "platform.h"
+
 #include <stack>
 
 class LinkedBlock;

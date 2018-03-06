@@ -1,5 +1,6 @@
 #include "test_socket_handler.h"
 
+
 TestSocketHandler::TestSocketHandler(BaseThread* thread)
 {
     net_socket_ = NULL;
@@ -15,10 +16,10 @@ TestSocketHandler::~TestSocketHandler()
     }
 }
 
-bool TestSocketHandler::init(NetServiceManager* manager, int socket, const NetAddress& address)
+bool TestSocketHandler::init(NetServiceManager* manager, int socket, const NetAddress& address, LinkedBlockPool* pool)
 {
     NetSocket* net_socket = new NetSocket();
-    if (false == net_socket->init(manager, socket, address))
+    if (false == net_socket->init(manager, socket, address, pool))
     {
         printf("TestSocketHandler::init failed\n");
         delete net_socket;
@@ -33,5 +34,7 @@ bool TestSocketHandler::init(NetServiceManager* manager, int socket, const NetAd
 
 void TestSocketHandler::on_event(EventType type, NetSocket* socket)
 {
-    printf("TestSocketHandler::on_event get type: %d\n", type);
+    char data[4] = { 0 };
+    net_socket_->get_buffer_in()->read(data, 2);
+    printf("TestSocketHandler::on_event get type: %d, get data: [%s]\n", type, data);
 }

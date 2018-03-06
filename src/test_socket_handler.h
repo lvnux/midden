@@ -6,6 +6,7 @@
 #include "base_thread.h"
 #include "net_service_manager.h"
 #include "net_address.h"
+#include "linked_block_pool.h"
 
 #include <string>
 
@@ -16,7 +17,7 @@ public:
     ~TestSocketHandler();
 
 public:
-    bool init(NetServiceManager* manager, int socket, const NetAddress& address);
+    bool init(NetServiceManager* manager, int socket, const NetAddress& address, LinkedBlockPool* pool);
 
 public:
     virtual void on_event(EventType type, NetSocket* socket);

@@ -11,7 +11,7 @@ LinkedBlock::LinkedBlock(LinkedBlockPool* pool)
     memset(begin_, 0, BLOCK_MAX_SIZE);
     end_ = begin_ + BLOCK_MAX_SIZE;
     cursor_ = begin_;
-    next_ = NULL
+    next_ = NULL;
     block_pool_ = pool;
 }
 
@@ -63,7 +63,7 @@ void LinkedBlock::reuse()
 {
     memset(begin_, 0, BLOCK_MAX_SIZE);
     cursor_ = begin_;
-    next_ = NULL
+    next_ = NULL;
 }
 
 void LinkedBlock::destroy()

@@ -18,14 +18,32 @@ NetServiceManager::~NetServiceManager()
 bool NetServiceManager::init()
 {
     selector_ = new EpollSelector();
-    // selector_ = new SelectSelector();
+    bool ret = selector_->init();
+    if (false == ret)
+    {
+        printf("selector_ init failed\n");
+        return false;
+    }
 
-    return selector_->init();
+    buffer_manager_ = new LinkedBufferManager();
+    ret = buffer_manager_->init();
+    if (false == ret)
+    {
+        printf("buffer_manager_ init failed\n");
+        return false;
+    }
+
+    return true;
 }
 
 ISelector* NetServiceManager::get_selector() const
 {
     return selector_;
+}
+
+LinkedBufferManager* NetServiceManager::get_buffer_manager() const
+{
+    return buffer_manager_;
 }
 
 NetServerSocket* NetServiceManager::create_server_socket(BaseThread* thread)

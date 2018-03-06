@@ -2,21 +2,36 @@
 #define __LINKED_BUFFER_OUT_H__
 
 #include "ibuffer_out.h"
+#include "linked_block.h"
 
-class LinkedBufferOut
+class LinkedBlockPool;
+class LinkedBufferOut : public IBufferOut
 {
 public:
-    LinkedBufferOut();
+    LinkedBufferOut(LinkedBlockPool* pool);
     ~LinkedBufferOut();
-    public:
-    virtual IBlockOut* get_block() = 0;
-    virtual void set_flush_handler(IFlushHandler* handler) = 0;
 
-    public:
-    virtual void write(const char* data, uint32 bytes) = 0;
-    virtual void flush() = 0;
-    virtual uint32 size() const = 0;
-    virtual void close() = 0;
+public:
+    void consumer_block(uint32 length);
+
+protected:
+    virtual IBlockOut* get_block();
+    virtual void set_flush_handler(IFlushHandler* handler);
+
+    virtual void write(const char* data, uint32 bytes);
+    virtual void flush();
+    virtual uint32 size() const;
+    virtual void close();
+
+private:
+    LinkedBlock* first_;
+    LinkedBlock* last_;
+
+    int origin_;
+    int length_;  // 已写入数据总长度
+
+    IFlushHandler* handler_;
+    LinkedBlockPool* block_pool_;
 };
 
 #endif  // __LINKED_BUFFER_OUT_H__

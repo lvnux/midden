@@ -3,6 +3,8 @@
 
 #include "net_service_manager.h"
 #include "base_thread.h"
+#include "linked_block_pool.h"
+
 
 class TestThread : public BaseThread
 {
@@ -18,6 +20,7 @@ private:
 
 private:
     NetServiceManager* manager_;
+    LinkedBlockPool* block_pool_;
 };
 
 #endif  // __TEST_THREAD_H__
