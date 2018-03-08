@@ -85,6 +85,8 @@ bool NetSocket::init(NetServiceManager* manager, int socket, const NetAddress& a
     buffer_out_ = manager->get_buffer_manager()->create_buffer_out(pool);
     buffer_out_->set_flush_handler(this);
 
+    set_state(SocketState::CONNECTING);  // 建立连接中
+
     int flags = fcntl(socket_, F_GETFL);
     if (flags == -1)
     {
@@ -117,7 +119,21 @@ bool NetSocket::init(NetServiceManager* manager, int socket, const NetAddress& a
 
 void NetSocket::connect(const NetAddress& address)
 {
+    if (has_state(SocketState::CONNECTING))
+    {
+        return;
+    }
 
+    set_state(SocketState::CONNECTING);
+
+    sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = address.get_ipaddress();
+    addr.sin_port = htons(address.get_port());
+
+    ::connect(socket_, (struct sockaddr*)&addr, sizeof(addr));
 }
 
 void NetSocket::close()
@@ -188,7 +204,14 @@ IBufferOut* NetSocket::get_buffer_out() const
 }
 
 void NetSocket::on_flush(IBufferOut* buffer)
-{}
+{
+    if (has_state(SocketState::WRITABLE) && !has_state(SocketState::DELAYED)
+        && !has_state(SocketState::CLOSING) && buffer_out_->size() != 0)
+    {
+        set_state(SocketState::DELAYED);
+        send();
+    }
+}
 
 void NetSocket::on_read()
 {
@@ -260,12 +283,84 @@ void NetSocket::on_read()
 
 void NetSocket::on_write()
 {
+    if (has_state(SocketState::CLOSING))
+    {
+        return;
+    }
 
+    if (!has_state(SocketState::CONNECTED))
+    {
+        on_connected();
+    }
+
+    if (has_state(SocketState::CONNECTED))
+    {
+        set_state(SocketState::WRITABLE);
+        if (!has_state(SocketState::DELAYED) && buffer_out_->size() != 0)
+        {
+            set_state(SocketState::DELAYED);
+            send();
+        }
+    }
 }
 
 void NetSocket::on_connected()
 {
+    int optval = 0;
+    socklen_t optlen = sizeof(optval);
 
+    getsockopt(socket_, SOL_SOCKET, SO_ERROR, &optval, &optlen);
+    if (0 == optval)
+    {
+        set_state(SocketState::CONNECTED);
+    }
+    else
+    {
+        printf("on_connected failed, err: [%s]\n", strerror(errno));
+        notify_event(EventType::Error);
+    }
+}
+
+void NetSocket::send()
+{
+    set_state(SocketState::DELAYED, false);
+
+    while (has_state(SocketState::WRITABLE) && buffer_out_->size() != 0)
+    {
+        IBlockOut* block = buffer_out_->get_block();
+        int bytes = ::send(socket_, block->data(), block->size(), MSG_NOSIGNAL);
+        if (bytes > 0)
+        {
+            block->consume(bytes);
+        }
+        block->release();
+
+        // printf("NetSocket::send data: %s, size: %d, buffer_size: %d\n", 
+        //     block->data(), block->size(), buffer_out_->size());
+
+        if (-1 == bytes)
+        {
+            if (errno == EAGAIN)
+            {
+                set_state(SocketState::WRITABLE, false);
+            }
+            else if (errno == EPIPE || errno == ECONNRESET)
+            {
+                printf("send failed, err: [%s]\n", strerror(errno));
+                notify_event(EventType::Error);
+                set_state(SocketState::WRITABLE, false);
+            }
+            else
+            {
+                printf("send failed, err: [%s]\n", strerror(errno));
+            }
+        }
+    }
+
+    if (buffer_out_->size() == 0)
+    {
+        notify_event(EventType::Writable);
+    }
 }
 
 void NetSocket::notify_event(EventType type)
@@ -274,11 +369,6 @@ void NetSocket::notify_event(EventType type)
     {
         handler_->on_event(type, this);
     }
-}
-
-void NetSocket::send()
-{
-
 }
 
 bool NetSocket::has_state(uint8 state)

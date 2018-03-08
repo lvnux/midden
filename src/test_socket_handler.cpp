@@ -1,4 +1,5 @@
 #include "test_socket_handler.h"
+#include <string>
 
 
 TestSocketHandler::TestSocketHandler(BaseThread* thread)
@@ -34,7 +35,16 @@ bool TestSocketHandler::init(NetServiceManager* manager, int socket, const NetAd
 
 void TestSocketHandler::on_event(EventType type, NetSocket* socket)
 {
-    char data[4] = { 0 };
-    net_socket_->get_buffer_in()->read(data, 2);
-    printf("TestSocketHandler::on_event get type: %d, get data: [%s]\n", type, data);
+    printf("TestSocketHandler::on_event get type: %d\n", type);
+
+    if (EventType::Read == type)
+    {
+        char data[1024] = { 0 };
+        net_socket_->get_buffer_in()->read(data, net_socket_->get_buffer_in()->available());
+        printf("TestSocketHandler::on_event get data: [%s]\n", data);
+
+        std::string response = "response: ";
+        response.append(data);
+        net_socket_->get_buffer_out()->write(response.c_str(), response.size());
+    }
 }

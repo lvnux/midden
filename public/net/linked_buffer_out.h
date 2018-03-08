@@ -27,8 +27,8 @@ private:
     LinkedBlock* first_;
     LinkedBlock* last_;
 
-    int origin_;
-    int length_;  // 已写入数据总长度
+    uint32 origin_;
+    uint32 length_;  // 已写入数据总长度
 
     IFlushHandler* handler_;
     LinkedBlockPool* block_pool_;

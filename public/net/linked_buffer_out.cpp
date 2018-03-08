@@ -26,6 +26,8 @@ void LinkedBufferOut::consumer_block(uint32 length)
         return;
     }
 
+    length_ -= length;
+
     if (first_->available() > length + origin_)
     {
         origin_ += length;
@@ -76,6 +78,7 @@ void LinkedBufferOut::write(const char* data, uint32 bytes)
         {
             first_ = last_ = block_pool_->get_block();
         }
+        else
         {
             last_->set_next(block_pool_->get_block());
             last_ = last_->get_next();
@@ -83,6 +86,7 @@ void LinkedBufferOut::write(const char* data, uint32 bytes)
 
         count = std::min(bytes, last_->remain());
         memcpy(last_->get_cursor(), data, count);
+        last_->fill(count);
         bytes -= count;
         data += count;
     }

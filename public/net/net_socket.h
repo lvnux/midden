@@ -56,7 +56,18 @@ public:
      设置状态：
      flag为true设置状态；flag为false清除状态。
      */
-    bool set_state(uint8 state, bool flag = true);
+    bool set_state(uint8 state, bool flag=true);
+
+private:
+    // socket的状态
+    enum SocketState
+    {
+        CLOSING = 0x01,
+        CONNECTING = 0x02,
+        CONNECTED = 0x04,
+        WRITABLE = 0x08,
+        DELAYED = 0x10
+    };
 
 private:
     uint8 state_;
