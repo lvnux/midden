@@ -1,3 +1,8 @@
+/*
+ * iblock_in.h
+ * 接收缓存内存块，用于缓存接收到的消息
+ */
+
 #ifndef __I_BLOCK_IN_H__
 #define __I_BLOCK_IN_H__
 

@@ -1,3 +1,8 @@
+/*
+ * iblcok_out.h
+ * 发送缓存内存块，用于缓存待发送数据
+ */
+
 #ifndef __I_BLOCK_OUT_H__
 #define __I_BLOCK_OUT_H__
 

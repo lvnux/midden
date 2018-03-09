@@ -1,3 +1,8 @@
+/*
+ * linked_block_in.h
+ * 接收消息内存存储管理
+ */
+
 #ifndef __LINKED_BLOCK_IN_H__
 #define __LINKED_BLOCK_IN_H__
 

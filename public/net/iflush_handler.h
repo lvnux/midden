@@ -1,3 +1,8 @@
+/*
+ * iflush_handler.h
+ * 发送待发送缓存区的数据
+ */
+
 #ifndef __I_FLUSH_HANDLER_H__
 #define __I_FLUSH_HANDLER_H__
 

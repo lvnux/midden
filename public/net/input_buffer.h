@@ -1,3 +1,8 @@
+/*
+ * input_buffer.h
+ * 接收数据缓存
+ */
+
 #ifndef __INPUT_BUFFER_H__
 #define __INPUT_BUFFER_H__
 

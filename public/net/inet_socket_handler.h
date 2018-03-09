@@ -1,3 +1,8 @@
+/*
+ * inet_socket_handler.h
+ * 通用socket处理类
+ */
+
 #ifndef __INET_SOCKET_HANDLER_H__
 #define __INET_SOCKET_HANDLER_H__
 

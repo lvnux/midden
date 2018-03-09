@@ -1,3 +1,8 @@
+/*
+ * linked_buffer_manager.h
+ * 缓存管理
+ */
+
 #ifndef __LINKED_BUFFER_MANAGER_H__
 #define __LINKED_BUFFER_MANAGER_H__
 

@@ -205,8 +205,10 @@ IBufferOut* NetSocket::get_buffer_out() const
 
 void NetSocket::on_flush(IBufferOut* buffer)
 {
-    if (has_state(SocketState::WRITABLE) && !has_state(SocketState::DELAYED)
-        && !has_state(SocketState::CLOSING) && buffer_out_->size() != 0)
+    if (has_state(SocketState::WRITABLE) &&
+        !has_state(SocketState::DELAYED) &&
+        !has_state(SocketState::CLOSING) &&
+        buffer_out_->size() != 0)
     {
         set_state(SocketState::DELAYED);
         send();

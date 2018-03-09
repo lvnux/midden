@@ -1,3 +1,8 @@
+/*
+ * linked_buffer_in.h
+ * 接收消息缓存
+ */
+
 #ifndef __LINKED_BUFFER_IN_H__
 #define __LINKED_BUFFER_IN_H__
 

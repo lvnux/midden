@@ -1,3 +1,8 @@
+/*
+ * linked_block_out.h
+ * 待发送消息内存存储管理
+ */
+
 #ifndef __LINKED_BLOCK_OUT_H__
 #define __LINKED_BLOCK_OUT_H__
 

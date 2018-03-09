@@ -1,3 +1,8 @@
+/*
+ * linked_block.h
+ * 内存块
+ */
+
 #ifndef __LINKED_BLOCK_H__
 #define __LINKED_BLOCK_H__
 

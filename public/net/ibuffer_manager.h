@@ -1,3 +1,8 @@
+/*
+ * ibuffer_manager.h
+ * 缓存管理基类
+ */
+
 #ifndef __I_BUFFER_MANAGER_H__
 #define __I_BUFFER_MANAGER_H__
 

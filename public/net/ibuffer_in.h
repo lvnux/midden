@@ -1,3 +1,8 @@
+/*
+ * ibuffer_in.h
+ * 接收缓存基类
+ */
+
 #ifndef __I_BUFFER_IN_H__
 #define __I_BUFFER_IN_H__
 

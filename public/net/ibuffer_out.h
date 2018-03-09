@@ -1,3 +1,8 @@
+/*
+ * ibuffer_out.h
+ * 发送缓存基类
+ */
+
 #ifndef __I_BUFFER_OUT_H__
 #define __I_BUFFER_OUT_H__
 

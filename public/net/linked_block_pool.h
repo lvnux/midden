@@ -1,3 +1,8 @@
+/*
+ * linked_block_pool.h
+ * 内存块管理池
+ */
+
 #ifndef __LINKED_BLOCK_POOL_H__
 #define __LINKED_BLOCK_POOL_H__
 

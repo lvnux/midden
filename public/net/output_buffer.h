@@ -1,3 +1,8 @@
+/*
+ * output_buffer.h
+ * 发送缓存基类
+ */
+
 #ifndef __OUTPUT_BUFFER_H__
 #define __OUTPUT_BUFFER_H__
 

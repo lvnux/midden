@@ -1,3 +1,8 @@
+/*
+ * linked_buffer_out.h
+ * 待发送消息缓存
+ */
+
 #ifndef __LINKED_BUFFER_OUT_H__
 #define __LINKED_BUFFER_OUT_H__
 
