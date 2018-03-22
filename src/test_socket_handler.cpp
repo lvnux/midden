@@ -1,4 +1,5 @@
 #include "test_socket_handler.h"
+#include "http_response.h"
 #include <string>
 
 
@@ -43,8 +44,15 @@ void TestSocketHandler::on_event(EventType type, NetSocket* socket)
         net_socket_->get_buffer_in()->read(data, net_socket_->get_buffer_in()->available());
         printf("TestSocketHandler::on_event get data: [%s]\n", data);
 
-        std::string response = "response: ";
-        response.append(data);
-        net_socket_->get_buffer_out()->write(response.c_str(), response.size());
+        std::string response_content = "response: ";
+        response_content.append(data);
+
+        http::HttpResponse response;
+        response.set_status(200);
+        response.set_content(response_content);
+        std::string content;
+        response.encode(content);
+
+        net_socket_->get_buffer_out()->write(content.c_str(), content.size());
     }
 }

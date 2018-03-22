@@ -15,9 +15,12 @@ u_cpppath.append(u_include_dir)
 
 u_cpppath.append(u_public_dir)
 u_cpppath.append(u_public_dir + "/base")
+u_cpppath.append(u_public_dir + "/common")
 u_cpppath.append(u_public_dir + "/log")
 u_cpppath.append(u_public_dir + "/net")
+u_cpppath.append(u_public_dir + "/http")
 u_cpppath.append(u_public_dir + "/thread")
+
 
 u_cpppath.append(u_source_dir)
 
@@ -25,8 +28,10 @@ u_libpath = ['/usr/local/lib', '/usr/local/lib64', '/usr/lib64']
 
 u_libs = ['pthread', 'rt']
 
-u_cppfiles = Glob(u_public_dir + '/log/*.cpp') + \
+u_cppfiles =  Glob(u_public_dir + '/common/*.cpp') + \
+    Glob(u_public_dir + '/log/*.cpp') + \
     Glob(u_public_dir + '/net/*.cpp') + \
+    Glob(u_public_dir + '/http/*.cpp') + \
     Glob(u_public_dir + '/thread/*.cpp') + \
     Glob(u_source_dir + '/*.cpp')
 
