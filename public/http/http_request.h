@@ -1,30 +1,32 @@
-#ifndef __HTTP_RESPONSE_H__
-#define __HTTP_RESPONSE_H__
+#ifndef __HTTP_REQUEST_H__
+#define __HTTP_REQUEST_H__
 
 #include "http_protocol.h"
 #include <string>
 
 namespace http
 {
-    class HttpResponse
+    class HttpRequest
     {
     public:
-        HttpResponse();
-        virtual ~HttpResponse();
+        HttpRequest();
+        virtual ~HttpRequest();
 
     public:
         bool decode(const std::string& data);
         bool encode(std::string& data);
 
     public:
+        const std::string& get_method() const;
+        void set_method(const std::string& path);
+
+        const std::string& get_url() const;
+        void set_url(const std::string& url);
+
+        const std::string& get_path() const;
+
         const std::string& get_version() const;
         void set_version(const std::string& version);
-
-        int get_status() const;
-        void set_status(int status);
-
-        const std::string& get_reason() const;
-        void set_reason(const std::string& reason);
 
         bool get_header(const std::string& key, std::string& value) const;
         bool get_header(const std::string& key, int& value) const;
@@ -37,11 +39,11 @@ namespace http
         void set_content(const std::string& content);
 
     private:
-        const char* read_status_line(const char* begin, const char* end);  // 读取http响应的第一行
-        const char* read_version(const char* begin, const char* end);
+        const char* read_request_line(const char* begin, const char* end);  // 读取http请求的第一行
+        const char* read_method(const char* begin, const char* end);
         const char* read_space(const char* begin, const char* end);
-        const char* read_status(const char* begin, const char* end);
-        const char* read_reason(const char* begin, const char* end);
+        const char* read_url(const char* begin, const char* end);
+        const char* read_version(const char* begin, const char* end);
         const char* read_headers(const char* begin, const char* end);  // 读取头部
         const char* read_header(const char* begin, const char* end);  // 读取一个头部
 
@@ -49,12 +51,13 @@ namespace http
         static const std::string& format_header_key(std::string& dst, const std::string& key);  // http头键值转换为 ”Xxxxxx-Xxxx-Xxxx“ 格式
 
     private:
+        std::string url_;
+        std::string method_;
+        std::string path_;
         std::string version_;
-        int status_;
-        std::string reason_;
         Header headers_;
         std::string content_; 
     };
 }
 
-#endif  // __HTTP_RESPONSE_H__
+#endif  // __HTTP_REQUEST_H__

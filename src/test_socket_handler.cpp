@@ -1,5 +1,6 @@
 #include "test_socket_handler.h"
 #include "http_response.h"
+#include "http_request.h"
 #include <string>
 
 
@@ -44,8 +45,40 @@ void TestSocketHandler::on_event(EventType type, NetSocket* socket)
         net_socket_->get_buffer_in()->read(data, net_socket_->get_buffer_in()->available());
         printf("TestSocketHandler::on_event get data: [%s]\n", data);
 
+        http::HttpRequest request;
+        request.decode(data);
+        printf("TestSocketHandler::on_event method: %s, url: %s, path: %s, version: %s, content: %s\n",
+            request.get_method().c_str(), request.get_url().c_str(), request.get_path().c_str(),
+            request.get_version().c_str(), request.get_content().c_str());
+
+        http::Header headers = request.get_headers();
+        for (http::Header::const_iterator itor = headers.begin(); itor != headers.end(); ++itor)
+        {
+            printf("request key: %s, value: %s\n", itor->first.c_str(), itor->second.c_str());
+        }
+
+        std::string response_test_data =
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Length:16\r\n"
+            "Content-Type:text/html; charset=UTF-8\r\n"
+            "test: hhh eee"
+            "\r\n"
+            "response: helo";
+
+        http::HttpResponse response_test;
+        response_test.decode(response_test_data);
+        printf("TestSocketHandler::on_event response_test version: %s, status: %d, reason: %s, content: %s\n",
+            response_test.get_version().c_str(), response_test.get_status(), response_test.get_reason().c_str(), 
+            response_test.get_content().c_str());
+
+        headers = response_test.get_headers();
+        for (http::Header::const_iterator itor = headers.begin(); itor != headers.end(); ++itor)
+        {
+            printf("response key: %s, value: %s\n", itor->first.c_str(), itor->second.c_str());
+        }
+
         std::string response_content = "response: ";
-        response_content.append(data);
+        response_content.append(request.get_content());
 
         http::HttpResponse response;
         response.set_status(200);

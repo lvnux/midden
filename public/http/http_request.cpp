@@ -1,17 +1,20 @@
-#include "http_response.h"
+#include "http_request.h"
 #include "general.h"
 #include "notation.h"
+
+#include <string.h>
+#include <algorithm>
 
 
 namespace http
 {
-    HttpResponse::HttpResponse()
-     : version_("HTTP/1.1"), status_(200), reason_("OK")
+    HttpRequest::HttpRequest()
+     : path_("/"), version_("HTTP/1.1")
     {
 
     }
 
-    HttpResponse::~HttpResponse()
+    HttpRequest::~HttpRequest()
     {
 
     }
@@ -19,17 +22,17 @@ namespace http
     /*
      * 解码，按照http协议对响应进行解码
      */
-    bool HttpResponse::decode(const std::string& data)
+    bool HttpRequest::decode(const std::string& data)
     {
         const char* begin = data.c_str();
         const char* end = begin + data.size();
 
-        begin = read_status_line(begin, end);
+        begin = read_request_line(begin, end);
         begin = read_headers(begin, end);
         
         if (NULL == begin)
         {
-            printf("http response decode data [%s] error\n", data.c_str());
+            printf("http request decode data [%s] error\n", data.c_str());
             return false;
         }
 
@@ -47,11 +50,11 @@ namespace http
     /*
      * 编码，按照http协议对编码响应内容
      */
-    bool HttpResponse::encode(std::string& data)
+    bool HttpRequest::encode(std::string& data)
     {
         set_header("Content-Type", "text/html; charset=UTF-8");
         data.reserve(2048);
-        data.append(version_).append(" ").append(to_string(status_)).append(" ").append(reason_).append(" ").append("\r\n");  // eg: HTTP/1.1 200 OK
+        data.append(method_).append(" ").append(get_path()).append(" ").append(version_).append("\r\n");  // eg: HTTP/1.1 200 OK
         for (Header::const_iterator itor = headers_.begin(); itor != headers_.end(); ++itor)
         {
             data.append(itor->first).append(":").append(itor->second).append("\r\n");  // eg: Content-Type: text/html; charset=UTF-8
@@ -62,37 +65,58 @@ namespace http
         return true;
     }
 
-    const std::string& HttpResponse::get_version() const
+    const std::string& HttpRequest::get_method() const
+    {
+        return method_;
+    }
+
+    void HttpRequest::set_method(const std::string& method)
+    {
+        std::string temp = method;
+        std::transform(temp.begin(), temp.end(), temp.begin(), ::toupper);
+        method_ = temp;
+    }
+
+    const std::string& HttpRequest::get_url() const
+    {
+        return url_;
+    }
+
+    void HttpRequest::set_url(const std::string& url)
+    {
+        url_ = url;
+
+        std::string temp;
+        std::string::size_type pos = url.find("http://");
+        if (pos != std::string::npos)
+        {
+            temp = url.substr(pos+strlen("http://"));
+        }
+
+        pos = temp.find("/");
+        if (pos != std::string::npos)
+        {
+            set_header("Host", temp.substr(0, pos));
+            path_ = temp.substr(pos);
+        }
+        else
+        {
+            set_header("Host", temp);
+            path_ = "/";
+        }
+    }
+    
+    const std::string& HttpRequest::get_version() const
     {
         return version_;
     }
 
-    void HttpResponse::set_version(const std::string& version)
+    void HttpRequest::set_version(const std::string& version)
     {
         version_ = version;
     }
 
-    int HttpResponse::get_status() const
-    {
-        return status_;
-    }
-
-    void HttpResponse::set_status(int status)
-    {
-        status_ = status;
-    }
-
-    const std::string& HttpResponse::get_reason() const
-    {
-        return reason_;
-    }
-
-    void HttpResponse::set_reason(const std::string& reason)
-    {
-        reason_ = reason;
-    }
-
-    bool HttpResponse::get_header(const std::string& key, std::string& value) const
+    bool HttpRequest::get_header(const std::string& key, std::string& value) const
     {
         std::string format_key;
         Header::const_iterator itor = headers_.find(format_header_key(format_key, key));
@@ -105,7 +129,7 @@ namespace http
         return false;
     }
 
-    bool HttpResponse::get_header(const std::string& key, int& value) const
+    bool HttpRequest::get_header(const std::string& key, int& value) const
     {
         std::string temp;
         if (get_header(key, temp))
@@ -117,18 +141,18 @@ namespace http
         return false;
     }
 
-    void HttpResponse::set_header(const std::string& key, const std::string& value)
+    void HttpRequest::set_header(const std::string& key, const std::string& value)
     {
         std::string format_key;
         headers_[format_header_key(format_key, key)] = value;
     }
 
-    void HttpResponse::set_header(const std::string& key, int value)
+    void HttpRequest::set_header(const std::string& key, int value)
     {
         set_header(key, to_string(value));
     }
 
-    void HttpResponse::remove_header(const std::string& key)
+    void HttpRequest::remove_header(const std::string& key)
     {
         std::string format_key;
         Header::iterator itor = headers_.find(format_header_key(format_key, key));
@@ -138,57 +162,55 @@ namespace http
         }
     }
 
-    const Header& HttpResponse::get_headers() const
+    const Header& HttpRequest::get_headers() const
     {
         return headers_;
     }
 
-    const std::string& HttpResponse::get_content() const
+    const std::string& HttpRequest::get_content() const
     {
         return content_;
     }
 
-    void HttpResponse::set_content(const std::string& content)
+    void HttpRequest::set_content(const std::string& content)
     {
         content_ = content;
         set_header("Content-Length", content_.size());
     }
 
-    const char* HttpResponse::read_status_line(const char* begin, const char* end)
+    const std::string& HttpRequest::get_path() const
     {
+        return path_;
+    }
+
+    const char* HttpRequest::read_request_line (const char* begin, const char* end)
+    {
+        begin = read_method(begin, end);
+        begin = read_space(begin, end);
+        begin = read_url(begin, end);
+        begin = read_space(begin, end);
         begin = read_version(begin, end);
-        begin = read_space(begin, end);
-        begin = read_status(begin, end);
-        begin = read_space(begin, end);
-        begin = read_reason(begin, end);
 
         return begin;
     }
 
-    const char* HttpResponse::read_version(const char* begin, const char* end)
+    const char* HttpRequest::read_method(const char* begin, const char* end)
     {
         if ((begin >= end) || (NULL == begin))
         {
             return NULL;
         }
 
-        for (const char* pos = begin; pos < end; ++pos)
+        const char* method_end = Notation::check_token(begin, end);
+        if (NULL != method_end)
         {
-            if (Notation::is_space(pos[0]))
-            {
-                if (pos != begin)
-                {
-                    version_.assign(begin, pos);
-                    return pos;
-                }
-                break;
-            }
+            method_.assign(begin, method_end - begin);
         }
 
-        return NULL;
+        return method_end;
     }
 
-    const char* HttpResponse::read_space(const char* begin, const char* end)
+    const char* HttpRequest::read_space(const char* begin, const char* end)
     {
         if ((begin >= end) || (NULL == begin))
         {
@@ -203,33 +225,31 @@ namespace http
         return NULL;
     }
 
-    const char* HttpResponse::read_status(const char* begin, const char* end)
+    const char* HttpRequest::read_url(const char* begin, const char* end)
     {
         if ((begin >= end) || (NULL == begin))
         {
             return NULL;
         }
 
-        if (!Notation::is_digit(begin[0]))
+        for (const char* pos = begin; pos < end; ++pos)
         {
-            return NULL;
-        }
-
-        status_ = begin[0] - '0';
-
-        while (++begin < end)
-        {
-            if (!Notation::is_digit(begin[0]))
+            if (Notation::is_space(pos[0]))
             {
-                return begin;
+                if (pos != begin)
+                {
+                    url_.assign(begin, pos);
+                    path_ = url_;
+                    return pos;
+                }
+                break;
             }
-            status_ = 10 * status_ + (begin[0] - '0');
         }
 
         return NULL;
     }
 
-    const char* HttpResponse::read_reason(const char* begin, const char* end)
+    const char* HttpRequest::read_version(const char* begin, const char* end)
     {
         if ((begin >= end) || (NULL == begin))
         {
@@ -240,7 +260,7 @@ namespace http
         {
             if (Notation::is_carriage_return(pos[0]) && Notation::is_line_feed(pos[1]))
             {
-                reason_.assign(begin, pos - begin);
+                version_.assign(begin, pos - begin);
                 return pos;
             }
         }
@@ -248,9 +268,9 @@ namespace http
         return NULL;
     }
 
-    const char* HttpResponse::read_headers(const char* begin, const char* end)
+    const char* HttpRequest::read_headers(const char* begin, const char* end)
     {
-        const char* pos;
+        const char* pos = NULL;
         while ((begin < end) && (NULL != begin))
         {
             pos = Notation::check_CRLF(begin, end);  // 头部每一行后面的回车换行符
@@ -274,7 +294,7 @@ namespace http
         return begin;
     }
 
-    const char* HttpResponse::read_header(const char* begin, const char* end)
+    const char* HttpRequest::read_header(const char* begin, const char* end)
     {
         if ((begin >= end) || (NULL == begin))
         {
@@ -347,7 +367,7 @@ namespace http
     /**
      * http头键值转换为 ”Xxxxxx-Xxxx-Xxxx“ 格式
      */
-    const std::string& HttpResponse::format_header_key(std::string& dst, const std::string& key)
+    const std::string& HttpRequest::format_header_key(std::string& dst, const std::string& key)
     {
         bool need_to_upper = true;
         dst = key;
