@@ -1,3 +1,8 @@
+/*
+ * http_response.h
+ * 解析、构造http响应
+ */
+
 #ifndef __HTTP_RESPONSE_H__
 #define __HTTP_RESPONSE_H__
 

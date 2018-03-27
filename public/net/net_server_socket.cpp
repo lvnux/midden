@@ -75,7 +75,6 @@ int NetServerSocket::get_descriptor()
 
 void NetServerSocket::on_read()
 {
-    printf("on_read\n");
     while (true)
     {
         sockaddr_in addr;

@@ -9,7 +9,7 @@
 namespace http
 {
     HttpRequest::HttpRequest()
-     : path_("/"), version_("HTTP/1.1")
+     : path_("/"), version_("HTTP/1.1"), host_("")
     {
 
     }
@@ -92,18 +92,24 @@ namespace http
         {
             temp = url.substr(pos+strlen("http://"));
         }
+        else
+        {
+            temp = url;   // 协议前没带 “http://” 的url处理
+        }
 
         pos = temp.find("/");
         if (pos != std::string::npos)
         {
-            set_header("Host", temp.substr(0, pos));
+            host_ = temp.substr(0, pos);
             path_ = temp.substr(pos);
         }
         else
         {
-            set_header("Host", temp);
+            host_ = temp;
             path_ = "/";
         }
+
+        set_header("Host", host_);
     }
     
     const std::string& HttpRequest::get_version() const
@@ -181,6 +187,11 @@ namespace http
     const std::string& HttpRequest::get_path() const
     {
         return path_;
+    }
+
+    const std::string& HttpRequest::get_host() const
+    {
+        return host_;
     }
 
     const char* HttpRequest::read_request_line (const char* begin, const char* end)

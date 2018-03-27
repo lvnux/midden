@@ -61,13 +61,18 @@ void TestThread::dispose(BaseMsg* msg)
         return;
     }
 
-    printf("disponse: %d, %s\n", msg->msg_type, (msg->msg_id).c_str());
+    // printf("disponse: %d, %s\n", msg->msg_type, (msg->msg_id).c_str());
 
     switch (msg->msg_type)
     {
         case MSG_TYPE_ACCEPT_SOCKET:
         {
             dispose_accept_socket(msg);
+            break;
+        }
+        case MSG_TYPE_HTTP_RESPONSE:
+        {
+            dispose_http_response(msg);
             break;
         }
         default:
@@ -83,7 +88,7 @@ void TestThread::dispose(BaseMsg* msg)
 void TestThread::dispose_accept_socket(BaseMsg* msg)
 {
     TAcceptSocketMsg* pMsg = (TAcceptSocketMsg*)msg;
-    printf("msg type: [%d]\n", pMsg->msg_type);
+    // printf("msg type: [%d]\n", pMsg->msg_type);
 
     TestSocketHandler* handler = new TestSocketHandler(this);
     if (false == handler->init(manager_, pMsg->socket, pMsg->address, block_pool_))
@@ -92,4 +97,14 @@ void TestThread::dispose_accept_socket(BaseMsg* msg)
         delete handler;
         return;
     }
+
+    http_client_.init(manager_, this, block_pool_);
+    http_client_.get("http://112.74.216.118:9999/test_hello");
+}
+
+void TestThread::dispose_http_response(BaseMsg* msg)
+{
+    printf("TestThread::dispose_http_response\n");
+    http::THttpResponseMsg* pMsg = (http::THttpResponseMsg*)msg;
+    printf("%d, %s\n", pMsg->status, pMsg->response.get_content().c_str());
 }

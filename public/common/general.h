@@ -14,6 +14,8 @@
 #include <sstream>
 #include <sys/time.h>
 #include <vector>
+#include <algorithm>
+#include <math.h>
 
 
 int daemon_init();
@@ -38,6 +40,47 @@ inline std::string to_string(T src)
     oss << src;
 
     return oss.str();
+}
+
+inline std::string& to_upper(std::string& str)
+{
+    transform(str.begin(), str.end(), str.begin(), ::toupper);
+    return str;
+}
+
+inline std::string& to_lower(std::string& str)
+{
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
+inline int hexchar2int(char ch)
+{
+    if (ch > '0' && ch < '9')
+    {
+        return (ch - '0');
+    }
+    else if (ch > 'A' && ch < 'Z')
+    {
+        return (ch - 'A' + 10);
+    }
+    else if (ch > 'a' && ch < 'z')
+    {
+        return (ch - 'a' + 10);
+    }
+
+    return -1;
+}
+
+inline int hex2int(const char* ch, int size)
+{
+    int value;
+    for (int i = 0; i < size; i++)
+    {
+        value += hexchar2int(ch[i]) * (int)pow(16, size-i-1);
+    }
+
+    return value;
 }
 
 #endif  // __GENERAL_H__

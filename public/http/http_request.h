@@ -1,3 +1,8 @@
+/*
+ * http_request.h
+ * 解析、构造http请求
+ */
+
 #ifndef __HTTP_REQUEST_H__
 #define __HTTP_REQUEST_H__
 
@@ -38,6 +43,8 @@ namespace http
         const std::string& get_content() const;
         void set_content(const std::string& content);
 
+        const std::string& get_host() const;
+
     private:
         const char* read_request_line(const char* begin, const char* end);  // 读取http请求的第一行
         const char* read_method(const char* begin, const char* end);
@@ -56,7 +63,8 @@ namespace http
         std::string path_;
         std::string version_;
         Header headers_;
-        std::string content_; 
+        std::string content_;
+        std::string host_;
     };
 }
 
