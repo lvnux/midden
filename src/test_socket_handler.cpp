@@ -1,6 +1,8 @@
 #include "test_socket_handler.h"
 #include "http_response.h"
 #include "http_request.h"
+#include "log.h"
+
 #include <string>
 
 
@@ -24,7 +26,7 @@ bool TestSocketHandler::init(NetServiceManager* manager, int socket, const NetAd
     NetSocket* net_socket = new NetSocket();
     if (false == net_socket->init(manager, socket, address, pool))
     {
-        printf("TestSocketHandler::init failed\n");
+        log_error("TestSocketHandler::init failed");
         delete net_socket;
         net_socket = NULL;
         return false;
@@ -44,7 +46,7 @@ void TestSocketHandler::on_event(EventType type, NetSocket* socket)
     {
         char data[1024] = { 0 };
         net_socket_->get_buffer_in()->read(data, net_socket_->get_buffer_in()->available());
-        printf("TestSocketHandler::on_event get data: [%s]\n", data);
+        log_debug("TestSocketHandler::on_event get data: [%s]", data);
 
         http::HttpRequest request;
         request.decode(data);

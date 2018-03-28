@@ -1,4 +1,5 @@
 #include "log.h"
+#include "general.h"
 
 #include <string.h>
 #include <stdarg.h>
@@ -35,6 +36,11 @@ bool CLog::open()
 {
     if (NULL == handler_)
     {
+        if (check_file_exists(path_.c_str()) == -1)
+        {
+            create_directory(path_.c_str());
+        }
+
         time_t timestamp = time(NULL);
         localtime_r(&timestamp, &current_day_);
 

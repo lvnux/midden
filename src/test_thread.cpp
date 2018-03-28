@@ -2,7 +2,7 @@
 #include "net_server_socket.h"
 #include "thread_macro.h"
 #include "test_socket_handler.h"
-
+#include "log.h"
 
 bool TestThread::init()
 {
@@ -77,7 +77,7 @@ void TestThread::dispose(BaseMsg* msg)
         }
         default:
         {
-            printf("msg_type[%d] is invalied.\n", msg->msg_type);
+            log_error("msg_type[%d] is invalied.", msg->msg_type);
             break;
         }
     }
@@ -93,7 +93,7 @@ void TestThread::dispose_accept_socket(BaseMsg* msg)
     TestSocketHandler* handler = new TestSocketHandler(this);
     if (false == handler->init(manager_, pMsg->socket, pMsg->address, block_pool_))
     {
-        printf("TestThread::dispose_accept_socket failed\n");
+        log_error("TestThread::dispose_accept_socket failed");
         delete handler;
         return;
     }
@@ -104,7 +104,6 @@ void TestThread::dispose_accept_socket(BaseMsg* msg)
 
 void TestThread::dispose_http_response(BaseMsg* msg)
 {
-    printf("TestThread::dispose_http_response\n");
     http::THttpResponseMsg* pMsg = (http::THttpResponseMsg*)msg;
-    printf("%d, %s\n", pMsg->status, pMsg->response.get_content().c_str());
+    log_error("%d, %s", pMsg->status, pMsg->response.get_content().c_str());
 }

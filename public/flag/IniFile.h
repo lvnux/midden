@@ -23,7 +23,7 @@ typedef map<string, string> string_map;
 class AnalyzeIniEx
 {
 public:
-    AnalyzeIniEx(std::multimap<string, string_map>& sect) : m_Sect(sect), m_iter(sect.end());
+    AnalyzeIniEx(std::multimap<string, string_map>& sect);
     void operator()( const std::string & strini);
 
 private:

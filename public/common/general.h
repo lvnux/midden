@@ -13,17 +13,14 @@
 #include <string>
 #include <sstream>
 #include <sys/time.h>
-#include <vector>
 #include <algorithm>
 #include <math.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-
-int daemon_init();
-int check_file_exists(const char* pszfilename);
-void get_cur_directory(char* szpath, int nlen);
-
-std::string trim(const std::string& src);
-void split_to_vec(std::string src, std::string separator, std::vector<std::string>& vec);
+int check_file_exists(const char* pathname);
+void get_cur_directory(char* buffer, int nlen);
+int create_directory(const char* pathname, mode_t mode=S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
 
 // 获取当前时间戳，精确到毫秒
 inline int64_t get_cur_microsecond()

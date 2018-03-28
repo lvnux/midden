@@ -8,7 +8,8 @@
 #include <sstream>
 
 
-AnalyzeIniEx::AnalyzeIniEx(std::multimap<string, string_map>& sect) : sector_map_(sect), iterator_(sect.end())
+AnalyzeIniEx::AnalyzeIniEx(std::multimap<string, string_map>& sect) 
+ : sector_map_(sect), sector_itor_(sect.end())
 {
 
 }
@@ -34,7 +35,7 @@ void AnalyzeIniEx::operator()(const std::string & strini)
         return ;
 
     std::string strtmp1= strini.substr(0, first);
-    std::string strtmp2=strini.substr(first + 1, strini.length());
+    std::string strtmp2 = strini.substr(first + 1, strini.length());
 
     first = strtmp1.find_first_not_of(" \t");
     last = strtmp1.find_last_not_of(" \t");
