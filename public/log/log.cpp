@@ -45,16 +45,18 @@ bool CLog::open()
         localtime_r(&timestamp, &current_day_);
 
         char format_time[60] = { 0 };
-        snprintf(format_time, 60, "%s_%04d%02d%02d", name_.c_str(), 
+        snprintf(format_time, 60, "%04d%02d%02d",
             (1900 + current_day_.tm_year), (1 + current_day_.tm_mon), 
             current_day_.tm_mday);
 
         std::string full_path;
         std::string link_name;
-        full_path.assign(path_).append("/").append(format_time).append(".log");
+        std::string dst_link_name;
+        full_path.assign(path_).append("/").append(name_).append("_").append(format_time).append(".log");
+        dst_link_name.assign(name_).append("_").append(format_time).append(".log");
         link_name.assign(path_).append("/").append(name_).append(".log");
         unlink(link_name.c_str());
-        symlink(full_path.c_str(), link_name.c_str());
+        symlink(dst_link_name.c_str(), link_name.c_str());
 
         if ( NULL == (handler_ = fopen(full_path.c_str(), "a")))
         {

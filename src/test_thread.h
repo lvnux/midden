@@ -10,7 +10,11 @@
 class TestThread : public BaseThread
 {
 public:
-    virtual bool init();
+    TestThread();
+    virtual ~TestThread();
+    
+public:
+    virtual bool init(const std::string& ipaddress, int port);
 
 protected:
     virtual bool main_loop();
@@ -26,6 +30,7 @@ private:
 
 private:
     http::HttpClient http_client_;  // 测试用
+    Timer* timer_;  // 测试定时器
 };
 
 #endif  // __TEST_THREAD_H__

@@ -8,5 +8,6 @@
 
 bool parse_conf(const char* file);  // 配置文件解析
 bool init_log();  // 初始化日志记录对象
+bool start_test();
 
 #endif  // __MIDDEN_MAIN_H__

@@ -47,13 +47,13 @@ BaseMsg* BaseQueue::get_data()
  BaseThread
  */
 BaseThread::BaseThread()
-    : threadname_("thread")
+    : timer_manager_(NULL), threadname_("thread") 
 {
     pthread_mutex_init(&mutex_, NULL);
 }
 
 BaseThread::BaseThread(const std::string& name)
-    : threadname_(name)
+    : timer_manager_(NULL), threadname_(name)
 {
     pthread_mutex_init(&mutex_, NULL);
 }
@@ -65,6 +65,19 @@ BaseThread::~BaseThread()
 
 bool BaseThread::init()
 {
+    timer_manager_ = new TimerManager();
+    if (NULL == timer_manager_)
+    {
+        printf("timer_manager_ is NULL\n");
+        return false;
+    }
+
+    if (timer_manager_->init() == false)
+    {
+        printf("init timer_manager_ failed\n");
+        return false;
+    }
+
     return true;
 }
 
@@ -102,7 +115,7 @@ bool BaseThread::start()
     {
         std::cout << "set attr destroy failed" << std::endl;
     }
-
+    
     return true;
 }
 
@@ -164,6 +177,7 @@ bool BaseThread::main_loop()
     BaseMsg* msg = NULL;
     while (true)
     {
+        timer_manager_->click();
         pthread_mutex_lock(&mutex_);
         msg = que_.get_data();
         pthread_mutex_unlock(&mutex_);
@@ -184,4 +198,17 @@ bool BaseThread::main_loop()
 void BaseThread::dispose(BaseMsg* msg)
 {
     return;
+}
+
+Timer* BaseThread::set_timer(std::string msg_id, int milisec)
+{
+    BaseMsg* msg = new BaseMsg();
+    msg->msg_id = msg_id;
+    msg->msg_type = MSG_TYPE_TIMEOUT;
+    msg->sender = this;
+
+    Timer* timer = timer_manager_->create_timer();
+    timer->schedule(msg, milisec);
+
+    return timer;
 }

@@ -21,6 +21,7 @@ u_cpppath.append(u_public_dir + "/log")
 u_cpppath.append(u_public_dir + "/net")
 u_cpppath.append(u_public_dir + "/http")
 u_cpppath.append(u_public_dir + "/thread")
+u_cpppath.append(u_public_dir + "/timer")
 
 
 u_cpppath.append(u_source_dir)
@@ -35,6 +36,7 @@ u_cppfiles =  Glob(u_public_dir + '/common/*.cpp') + \
     Glob(u_public_dir + '/net/*.cpp') + \
     Glob(u_public_dir + '/http/*.cpp') + \
     Glob(u_public_dir + '/thread/*.cpp') + \
+    Glob(u_public_dir + '/timer/*.cpp') + \
     Glob(u_source_dir + '/*.cpp')
 
 

@@ -4,8 +4,26 @@
 #include "test_socket_handler.h"
 #include "log.h"
 
-bool TestThread::init()
+
+TestThread::TestThread()
+    : BaseThread()
 {
+
+}
+
+TestThread::~TestThread()
+{
+
+}
+
+bool TestThread::init(const std::string& ipaddress, int port)
+{
+    if (false == BaseThread::init())
+    {
+        printf("BaseThread::init() failed\n");
+        return false;
+    }
+
     manager_ = new NetServiceManager();
     if (false == manager_->init())
     {
@@ -14,13 +32,20 @@ bool TestThread::init()
     }
 
     NetServerSocket* server = manager_->create_server_socket(this);
-    if (false == server->listen(NetAddress("0.0.0.0", 8888)))
+    if (false == server->listen(NetAddress(ipaddress, port)))
     {
         printf("server->listen() failed\n");
         return false;
     }
 
     block_pool_ = new LinkedBlockPool();
+
+    timer_ = set_timer("test_timer", 3 * 1000);
+    if (NULL == timer_)
+    {
+        printf("set timer failed\n");
+        return false;
+    }
 
     return true;
 }
@@ -32,6 +57,7 @@ bool TestThread::main_loop()
     while (true)
     {
         // printf("select\n");
+        timer_manager_->click();
         manager_->get_selector()->select();
 
         pthread_mutex_lock(&mutex_);
@@ -47,8 +73,6 @@ bool TestThread::main_loop()
             dispose(msg);
             delete msg;
         }
-
-        sleep(2);
     }
 
     return true;
@@ -73,6 +97,17 @@ void TestThread::dispose(BaseMsg* msg)
         case MSG_TYPE_HTTP_RESPONSE:
         {
             dispose_http_response(msg);
+            break;
+        }
+        case MSG_TYPE_TIMEOUT:
+        {
+            log_debug("test timer: %s", msg->msg_id.c_str());
+            if (NULL != timer_)
+            {
+                delete timer_;
+                timer_ = NULL;
+            }
+            timer_ = set_timer("test_timer", 3*1000);
             break;
         }
         default:

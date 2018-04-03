@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[])
 {
-    std::string conf = "../conf/midden.ini";
+    std::string conf = "../conf/midden.conf";
 	int oc;
 	while ((oc = getopt(argc, argv, "c:")) != -1)
 	{
@@ -37,9 +37,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-    TestThread* test = new TestThread();
-    test->init();
-    test->start();
+	start_test();
 
     while (true)
     {
@@ -66,4 +64,16 @@ bool init_log()
 	}
 
 	return CLog::get_instance()->init(log_path, log_filename, log_level);
+}
+
+bool start_test()
+{
+	std::string ipaddress = IniFile::get_instance()->get_string("server", "ipaddress");
+	int port = IniFile::get_instance()->get_int("server", "port");
+
+	TestThread* test = new TestThread();
+    test->init(ipaddress, port);
+    test->start();
+
+	return true;
 }

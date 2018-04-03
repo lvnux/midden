@@ -9,7 +9,7 @@
 
 
 AnalyzeIniEx::AnalyzeIniEx(std::multimap<string, string_map>& sect) 
- : sector_map_(sect), sector_itor_(sect.end())
+    : sector_map_(sect), sector_itor_(sect.end())
 {
 
 }

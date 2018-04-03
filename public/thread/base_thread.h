@@ -6,6 +6,9 @@
 #ifndef __BASETHREAD_H__
 #define __BASETHREAD_H__
 
+#include "thread_macro.h"
+#include "mdn_timer_manager.h"
+
 #include <pthread.h>
 #include <string>
 #include <queue>
@@ -51,6 +54,8 @@ public:
 };
 
 
+class Timer;
+class TimerManager;
 // 线程基类
 class BaseThread
 {
@@ -81,6 +86,8 @@ public:
     void put_data(BaseMsg* msg);
     int get_msg_size();
 
+    Timer* set_timer(std::string msg_id, int milisec);
+
 protected:
     // 回调执行业务逻辑
     static void* run(void* arg);
@@ -94,6 +101,7 @@ protected:
 protected:
     BaseQueue que_;
     pthread_mutex_t mutex_;
+    TimerManager* timer_manager_;
 
 private:
     bool joined_;
