@@ -1,5 +1,5 @@
 #include "log.h"
-#include "general.h"
+#include "file_tool.h"
 
 #include <string.h>
 #include <stdarg.h>
@@ -29,6 +29,12 @@ bool CLog::init(const std::string& path, const std::string& name, int level)
     path_ = path;
     name_ = name;
     level_ = (Level)level;
+
+    if (0 != FileTool::is_dir_exist(path.c_str()))
+    {
+        FileTool::create_dir(path.c_str());
+    }
+
     return open();
 }
 
@@ -36,11 +42,6 @@ bool CLog::open()
 {
     if (NULL == handler_)
     {
-        if (check_file_exists(path_.c_str()) == -1)
-        {
-            create_directory(path_.c_str());
-        }
-
         time_t timestamp = time(NULL);
         localtime_r(&timestamp, &current_day_);
 

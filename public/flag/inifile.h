@@ -6,7 +6,7 @@
 #ifndef __INI_FILE_H__
 #define __INI_FILE_H__
 
-#include "general.h"
+#include "file_tool.h"
 
 #include <map>
 #include <string>

@@ -90,7 +90,7 @@ bool IniFile::open(const char* ini_name)
 
     if(valid_path == NULL)
     {
-        get_cur_directory(filename, 260);
+        FileTool::get_cur_directory(filename, 260);
         strcat(filename, "/");
         strcat(filename, ini_name);
     }
@@ -99,7 +99,7 @@ bool IniFile::open(const char* ini_name)
         strcat(filename, ini_name);
     }
 
-    if ( 1 == check_file_exists(filename))
+    if ( 1 == FileTool::is_file_exist(filename))
     {
         std::cout << "no configure file found" << std::endl;
         return false;
