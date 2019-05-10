@@ -12,6 +12,7 @@
 namespace http
 {
     typedef std::map<std::string, std::string> Header;
+	typedef std::map<std::string, std::string> Query;
 }
 
 #endif  // __HTTP_PROTOCOL_H__

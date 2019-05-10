@@ -28,7 +28,7 @@ int LinkedBlockIn::size()
 
 void LinkedBlockIn::fill(int bytes)
 {
-    if (bytes < size())
+    if (bytes <= size())
     {
         block_->fill(bytes);
         buffer_->put_block(block_, bytes);

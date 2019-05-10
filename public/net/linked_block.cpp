@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define BLOCK_MAX_SIZE 30000
+#define BLOCK_MAX_SIZE 100000
 
 LinkedBlock::LinkedBlock(LinkedBlockPool* pool)
 {

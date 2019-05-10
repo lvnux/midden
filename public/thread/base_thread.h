@@ -6,6 +6,7 @@
 #ifndef __BASETHREAD_H__
 #define __BASETHREAD_H__
 
+#include "platform.h"
 #include "thread_macro.h"
 #include "mdn_timer_manager.h"
 
@@ -23,16 +24,20 @@ public:
     BaseMsg()
     {
         msg_type = 0;
-        msg_id = "";
+		msg_sn = 0;
+        msg_session_id = "";
         sender = NULL;
+		receive_time = 0;
     }
 
     virtual ~BaseMsg(){}
 
 public:
     int msg_type;
-    std::string msg_id;
+	uint64 msg_sn;
+    std::string msg_session_id;
     BaseThread* sender;
+	int64 receive_time;
 };
 
 
@@ -86,7 +91,7 @@ public:
     void put_data(BaseMsg* msg);
     int get_msg_size();
 
-    Timer* set_timer(std::string msg_id, int milisec);
+    Timer* set_timer(uint64 msg_sn, std::string msg_session_id, int milisec);
 
 protected:
     // 回调执行业务逻辑

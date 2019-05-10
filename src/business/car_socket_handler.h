@@ -1,5 +1,5 @@
-#ifndef __TEST_SOCKET_HANDLER_H__
-#define __TEST_SOCKET_HANDLER_H__
+#ifndef __CAR_SOCKET_HANDLER_H__
+#define __CAR_SOCKET_HANDLER_H__
 
 #include "inet_socket_handler.h"
 #include "net_socket.h"
@@ -10,22 +10,27 @@
 
 #include <string>
 
-class TestSocketHandler : public INetSocketHandler
+class CarSocketHandler : public INetSocketHandler
 {
 public:
-    TestSocketHandler(BaseThread* thread);
-    ~TestSocketHandler();
+    CarSocketHandler(BaseThread* thread, uint64 sn);
+    ~CarSocketHandler();
 
 public:
     bool init(NetServiceManager* manager, int socket, const NetAddress& address, LinkedBlockPool* pool);
 
 public:
     virtual void on_event(EventType type, NetSocket* socket);
+	void send_response(int code, const std::string& desc, const std::string& plate_num);
 
 private:
+	bool on_data(NetSocket* socket, const char* data, int32 length);
+	
+private:
+	uint64 sn_;
     NetSocket* net_socket_;
     BaseThread* thread_;
     std::string client_ipaddress_;
 };
 
-#endif  // __TEST_SOCKET_HANDLER_H__
+#endif  // __CAR_SOCKET_HANDLER_H__

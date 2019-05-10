@@ -9,6 +9,7 @@
 #include "platform.h"
 
 #include <stack>
+#include <stdlib.h>
 
 class LinkedBlock;
 class LinkedBlockPool

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <signal.h>
 #include <errno.h>
+#include <unistd.h>
 #include <list>
 
 
@@ -200,10 +201,11 @@ void BaseThread::dispose(BaseMsg* msg)
     return;
 }
 
-Timer* BaseThread::set_timer(std::string msg_id, int milisec)
+Timer* BaseThread::set_timer(uint64 msg_sn, std::string msg_session_id, int milisec)
 {
     BaseMsg* msg = new BaseMsg();
-    msg->msg_id = msg_id;
+	msg->msg_sn = msg_sn;
+    msg->msg_session_id = msg_session_id;
     msg->msg_type = MSG_TYPE_TIMEOUT;
     msg->sender = this;
 

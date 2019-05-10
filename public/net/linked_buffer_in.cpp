@@ -91,7 +91,7 @@ uint32 LinkedBufferIn::available() const
 void LinkedBufferIn::mark()
 {
     LinkedBlock* block = first_;
-    if (block != current_)
+    while (block != current_)
     {
         first_ = block->get_next();
         block->destroy();

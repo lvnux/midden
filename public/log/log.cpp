@@ -110,7 +110,7 @@ void CLog::write_log(Level level, const char* file, const int line, const char* 
         fprintf(handler_, "[%04d-%02d-%02d %02d:%02d:%02d] [%s] [%s] %s\n", 
             (1900 + now.tm_year), (1 + now.tm_mon), now.tm_mday, 
             now.tm_hour, now.tm_min, now.tm_sec,
-            LEVEL_NAME[level_].c_str(), 
+            LEVEL_NAME[level].c_str(), 
             soruce_position, msg);
         fflush(handler_);
     }

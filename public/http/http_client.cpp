@@ -50,20 +50,20 @@ namespace http
         request_.set_header(key, value);
     }
 
-    void HttpClient::get(const std::string& url)
+    void HttpClient::get(const std::string& uri)
     {
         request_.set_method("GET");
-        request_.set_url(url);
+        request_.set_uri(uri);
         std::string data;
         request_.encode(data);
         
         send(data);
     }
 
-    void HttpClient::post(const std::string& url, const std::string& body)
+    void HttpClient::post(const std::string& uri, const std::string& body)
     {
         request_.set_method("GET");
-        request_.set_url(url);
+        request_.set_uri(uri);
         request_.set_content(body);
         std::string data;
         request_.encode(data);

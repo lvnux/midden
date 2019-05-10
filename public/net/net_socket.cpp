@@ -233,6 +233,7 @@ void NetSocket::on_read()
 
         IBlockIn* block = buffer_in_->get_block();
         bytes = recv(socket_, block->data(), block->size(), flags);
+		
         if (bytes > 0)  // 有数据
         {
             block->fill(bytes);

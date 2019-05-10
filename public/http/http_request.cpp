@@ -9,7 +9,7 @@
 namespace http
 {
     HttpRequest::HttpRequest()
-     : path_("/"), version_("HTTP/1.1"), host_("")
+     : path_("/"), query_(""), version_("HTTP/1.1"), host_("")
     {
 
     }
@@ -22,17 +22,17 @@ namespace http
     /*
      * 解码，按照http协议对响应进行解码
      */
-    bool HttpRequest::decode(const std::string& data)
+    bool HttpRequest::decode(const char* data, int32 length)
     {
-        const char* begin = data.c_str();
-        const char* end = begin + data.size();
+        const char* begin = data;
+        const char* end = data + length;
 
         begin = read_request_line(begin, end);
         begin = read_headers(begin, end);
         
         if (NULL == begin)
         {
-            printf("http request decode data [%s] error\n", data.c_str());
+            printf("http request decode data [%s] error\n", data);
             return false;
         }
 
@@ -42,6 +42,11 @@ namespace http
         {
             content_length = value;
         }
+		else
+		{
+			printf("data length [%d] less than Content-Length [%d] begin than \n", end - begin, value);
+			return false;
+		}
 
         content_.assign(begin, content_length);
         return true;
@@ -77,24 +82,24 @@ namespace http
         method_ = temp;
     }
 
-    const std::string& HttpRequest::get_url() const
+    const std::string& HttpRequest::get_uri() const
     {
-        return url_;
+        return uri_;
     }
 
-    void HttpRequest::set_url(const std::string& url)
+    void HttpRequest::set_uri(const std::string& uri)
     {
-        url_ = url;
+        uri_ = uri;
 
         std::string temp;
-        std::string::size_type pos = url.find("http://");
+        std::string::size_type pos = uri.find("http://");
         if (pos != std::string::npos)
         {
-            temp = url.substr(pos+strlen("http://"));
+            temp = uri.substr(pos+strlen("http://"));
         }
         else
         {
-            temp = url;   // 协议前没带 “http://” 的url处理
+            temp = uri;   // 协议前没带 “http://” 的url处理
         }
 
         pos = temp.find("/");
@@ -189,6 +194,35 @@ namespace http
         return path_;
     }
 
+	const std::string& HttpRequest::get_query() const
+	{
+		return query_;
+	}
+	
+	bool HttpRequest::get_query(const std::string& key, std::string& value) const
+	{
+		Query::const_iterator itor = querys_.find(key);
+		if (itor != querys_.end())
+		{
+			value = itor->second;
+			return true;
+		}
+
+		return false;
+	}
+	
+	bool HttpRequest::get_query(const std::string& key, int& value) const
+	{
+		std::string temp;
+		if (get_query(key, temp))
+		{
+			value = atoi(temp.c_str());
+			return true;
+		}
+
+		return false;
+	}
+
     const std::string& HttpRequest::get_host() const
     {
         return host_;
@@ -198,7 +232,7 @@ namespace http
     {
         begin = read_method(begin, end);
         begin = read_space(begin, end);
-        begin = read_url(begin, end);
+        begin = read_uri(begin, end);
         begin = read_space(begin, end);
         begin = read_version(begin, end);
 
@@ -236,7 +270,7 @@ namespace http
         return NULL;
     }
 
-    const char* HttpRequest::read_url(const char* begin, const char* end)
+    const char* HttpRequest::read_uri(const char* begin, const char* end)
     {
         if ((begin >= end) || (NULL == begin))
         {
@@ -249,8 +283,19 @@ namespace http
             {
                 if (pos != begin)
                 {
-                    url_.assign(begin, pos);
-                    path_ = url_;
+                    uri_.assign(begin, pos);
+					std::string::size_type temp_pos = uri_.find_first_of('?');
+					if (temp_pos != std::string::npos)
+					{
+						path_ = uri_.substr(0, temp_pos);
+						query_ = uri_.substr(temp_pos + 1);
+						parse_querys(query_);
+					}
+					else
+					{
+						path_ = uri_;
+					}
+					
                     return pos;
                 }
                 break;
@@ -401,5 +446,28 @@ namespace http
         }
 
         return dst;
+    }
+
+	void HttpRequest::parse_querys(std::string querys)
+    {
+    	std::string::size_type pos;
+		std::string::size_type equal_pos;
+		std::string temp;
+    	while ((pos = querys.find_first_of('&')) != std::string::npos)
+    	{
+    		temp = querys.substr(0, pos);
+			querys = querys.substr(pos + 1);
+			if ((equal_pos = temp.find_first_of('=')) != std::string::npos)
+			{
+				querys_[temp.substr(0, equal_pos)] = temp.substr(equal_pos + 1);
+			}
+    	}
+
+		temp = querys.substr(0, pos);
+		querys = querys.substr(pos + 1);
+		if ((equal_pos = temp.find_first_of('=')) != std::string::npos)
+		{
+			querys_[temp.substr(0, equal_pos)] = temp.substr(equal_pos + 1);
+		}
     }
 }

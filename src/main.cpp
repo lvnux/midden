@@ -1,14 +1,16 @@
 #include "main.h"
 #include "log.h"
-#include "test_thread.h"
 #include "inifile.h"
+#include "car_http_thread.h"
+#include "plate_recognition_worker.h"
 
 #include <stdio.h>
 #include <unistd.h>
 
+
 int main(int argc, char* argv[])
 {
-    std::string conf = "../conf/midden.conf";
+    std::string conf = "../conf/car_node.conf";
 	int oc;
 	while ((oc = getopt(argc, argv, "c:")) != -1)
 	{
@@ -37,12 +39,19 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	start_test();
+	if (false == start_car_node_thread())
+	{
+		printf("start_car_node_thread failed\n");
+		return -1;
+	}
 
-    while (true)
-    {
-        sleep(2);
-    }
+	if (false == PlateRecognitionWorker::get_instance()->init(IniFile::get_instance()->get_int("algo", "gpu_index")))
+	{
+		printf("PlateRecognitionWorker::get_instance()->init failed\n");
+		return -1;
+	}
+	
+	PlateRecognitionWorker::get_instance()->run();
 
     return 0;
 }
@@ -66,14 +75,15 @@ bool init_log()
 	return CLog::get_instance()->init(log_path, log_filename, log_level);
 }
 
-bool start_test()
+bool start_car_node_thread()
 {
 	std::string ipaddress = IniFile::get_instance()->get_string("server", "ipaddress");
 	int port = IniFile::get_instance()->get_int("server", "port");
 
-	TestThread* test = new TestThread();
-    test->init(ipaddress, port);
-    test->start();
+	
+    CarHttpThread::get_instance()->init(ipaddress, port);
+    CarHttpThread::get_instance()->start();
 
 	return true;
 }
+

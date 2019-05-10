@@ -7,6 +7,7 @@
 #define __HTTP_REQUEST_H__
 
 #include "http_protocol.h"
+#include "platform.h"
 #include <string>
 
 namespace http
@@ -18,17 +19,20 @@ namespace http
         virtual ~HttpRequest();
 
     public:
-        bool decode(const std::string& data);
+        bool decode(const char* data, int32 length);
         bool encode(std::string& data);
 
     public:
         const std::string& get_method() const;
         void set_method(const std::string& path);
 
-        const std::string& get_url() const;
-        void set_url(const std::string& url);
+        const std::string& get_uri() const;
+        void set_uri(const std::string& uri);
 
         const std::string& get_path() const;
+		const std::string& get_query() const;
+		bool get_query(const std::string& key, std::string& value) const;
+		bool get_query(const std::string& key, int& value) const;
 
         const std::string& get_version() const;
         void set_version(const std::string& version);
@@ -49,20 +53,23 @@ namespace http
         const char* read_request_line(const char* begin, const char* end);  // 读取http请求的第一行
         const char* read_method(const char* begin, const char* end);
         const char* read_space(const char* begin, const char* end);
-        const char* read_url(const char* begin, const char* end);
+        const char* read_uri(const char* begin, const char* end);
         const char* read_version(const char* begin, const char* end);
         const char* read_headers(const char* begin, const char* end);  // 读取头部
         const char* read_header(const char* begin, const char* end);  // 读取一个头部
+        void parse_querys(std::string querys);
 
     private:
         static const std::string& format_header_key(std::string& dst, const std::string& key);  // http头键值转换为 ”Xxxxxx-Xxxx-Xxxx“ 格式
 
     private:
-        std::string url_;
+        std::string uri_;
         std::string method_;
         std::string path_;
+		std::string query_;
         std::string version_;
         Header headers_;
+		Query querys_;
         std::string content_;
         std::string host_;
     };
